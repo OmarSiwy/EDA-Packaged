@@ -28,6 +28,12 @@ pkgs.stdenv.mkDerivation rec {
   ];
 
   postPatch = ''
+    # The Darwin branch shells out to `brew --prefix` (absent in the sandbox, so it
+    # expands to "") and hardcodes ''${BREW_PREFIX}/opt/{flex,bison,suite-sparse,
+    # tomlplusplus,boost}. Deleting every BREW_PREFIX line drops the whole homebrew
+    # block: bison/flex then come from PATH, and SuiteSparse_DIR/TOMLPP_DIR fall back
+    # to the -D cache values set in cmakeFlags below.
+    sed -i '/BREW_PREFIX/d' CMakeLists.txt
     # Remove Boost_NO_SYSTEM_PATHS so nix-installed boost is found.
     sed -i 's/set(Boost_NO_SYSTEM_PATHS TRUE)//' CMakeLists.txt
     # Remove version req (nixpkgs has 1.89) and drop 'system' component
