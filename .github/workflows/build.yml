@@ -30,7 +30,7 @@ jobs:
 
       - uses: cachix/cachix-action@v15
         with:
-          name: omarsiwy-eda
+          name: omarsiwy
           authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
           # Pull requests from forks cannot read the secret. Build anyway, just do not push.
           skipPush: ${{ github.event_name == 'pull_request' }}
@@ -42,13 +42,24 @@ jobs:
       # the cache would happily serve it to everyone.
       - name: Smoke test
         run: |
+          set -euo pipefail
+
           nix build .#cktimg -o result-cktimg
           ./result-cktimg/bin/cktimg-json --help > /dev/null
           echo "cktimg-json ok"
 
+          # netgen builds green while being fatally broken: its Makefile pipes through
+          # `tee` and returns tee's status, so a missing tclnetgen.so ships silently.
+          # Running it is the only check that catches that.
           nix build .#netgen -o result-netgen
-          echo "quit" | ./result-netgen/bin/netgen -batch 2>&1 | grep -qiv "couldn't load file"
+          if echo "quit" | ./result-netgen/bin/netgen -batch 2>&1 | grep -qi "couldn't load file"; then
+            echo "netgen cannot load its Tcl module"; exit 1
+          fi
           echo "netgen ok"
 
-          nix build .#despice -o result-despice
-          nix shell .#despice --command python -c 'import pyspice_rs; print("despice ok")'
+          # `nix shell .#despice` does NOT work: despice is a buildPythonPackage, so it
+          # exports no bin/ and nothing sets PYTHONPATH. Importing it the way Analog.nix
+          # actually does is the only test that reflects the consumer.
+          DESPICE=$(nix build .#despice --no-link --print-out-paths)
+          PYTHONPATH="$DESPICE/lib/python3.12/site-packages" \
+            nix run nixpkgs#python312 -- -c 'import pyspice_rs; print("despice ok")'

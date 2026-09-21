@@ -4,7 +4,7 @@ Prebuilt EDA tools for the UW-ASIC design template, so that `./env.sh` is a down
 instead of a Rust and Zig compile.
 
 ```bash
-cachix use omarsiwy-eda
+cachix use omarsiwy
 ```
 
 That one line is the point of this repo.
@@ -70,7 +70,14 @@ failure this repo would otherwise hand to everybody at once.
 
 ## Setup checklist
 
-- [ ] Create the `omarsiwy-eda` cache at https://app.cachix.org
-- [ ] Add `CACHIX_AUTH_TOKEN` to this repo's Actions secrets
-- [ ] Push `cktImg` with `src/json_main.zig` — the current pin builds the library only,
-      with no `bin/cktimg-json`, so the smoke test will fail until then
+- [x] Create the `omarsiwy` cache at https://app.cachix.org
+- [x] Add `CACHIX_AUTH_TOKEN` to this repo's Actions secrets
+- [x] Push `cktImg` with `src/json_main.zig`
+
+## Known gap
+
+`despice` ships `pyspice_rs` but **not** the `testbenches` package — maturin only installs
+the module named by `module-name`, so the other top-level package under `python-source`
+is dropped. `from testbenches import ...` therefore fails against this build and needs a
+DeSpice source checkout. Moving `python/testbenches` under `python/pyspice_rs/` upstream
+would ship it as a subpackage and close this.
