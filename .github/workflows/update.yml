@@ -1,0 +1,41 @@
+name: update-inputs
+
+# The known weakness of a hub repo: a commit to cktImg or DeSpice changes nothing here
+# until flake.lock moves, so the cache silently serves yesterday's build. This closes
+# that gap on a schedule instead of relying on someone remembering.
+on:
+  schedule:
+    - cron: "0 6 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: cachix/install-nix-action@v31
+        with:
+          extra_nix_config: |
+            experimental-features = nix-command flakes
+
+      - run: nix flake update
+
+      # A PR rather than a direct push: bumping an input can break a build, and that
+      # should be visible before the cache is repopulated from it.
+      - uses: peter-evans/create-pull-request@v7
+        with:
+          commit-message: "chore: bump flake inputs"
+          title: "chore: bump flake inputs"
+          body: |
+            Automated `nix flake update`.
+
+            Merging repopulates the cachix cache from the new revisions.
+            Check the `build` workflow passes first — a broken build here becomes a
+            broken `./env.sh` for everyone using the template.
+          branch: auto/flake-update
+          delete-branch: true

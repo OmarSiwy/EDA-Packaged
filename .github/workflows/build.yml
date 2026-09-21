@@ -1,0 +1,54 @@
+name: build
+
+# Builds every packaged tool and pushes the results to cachix, so that entering the
+# template's nix shell is a download rather than a Rust and Zig compile.
+on:
+  push:
+    branches: [main]
+  pull_request:
+  # Inputs are pinned in flake.lock, so a commit to cktImg or DeSpice does not reach
+  # anyone until the lock moves. update.yml bumps it nightly; this catches the rebuild.
+  workflow_dispatch:
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: cachix/install-nix-action@v31
+        with:
+          extra_nix_config: |
+            experimental-features = nix-command flakes
+            # netgen comes from here already built; without this line CI would compile it.
+            extra-substituters = https://openlane.cachix.org
+            extra-trusted-public-keys = openlane.cachix.org-1:qqdwh+QMNGmZAuyeQJTH9ErW57OWSvdtuwfBKdS254E=
+
+      - uses: cachix/cachix-action@v15
+        with:
+          name: omarsiwy-eda
+          authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
+          # Pull requests from forks cannot read the secret. Build anyway, just do not push.
+          skipPush: ${{ github.event_name == 'pull_request' }}
+
+      - name: Build all packages
+        run: nix build .#all --print-build-logs
+
+      # A package that builds but does not run is the failure mode worth catching here:
+      # the cache would happily serve it to everyone.
+      - name: Smoke test
+        run: |
+          nix build .#cktimg -o result-cktimg
+          ./result-cktimg/bin/cktimg-json --help > /dev/null
+          echo "cktimg-json ok"
+
+          nix build .#netgen -o result-netgen
+          echo "quit" | ./result-netgen/bin/netgen -batch 2>&1 | grep -qiv "couldn't load file"
+          echo "netgen ok"
+
+          nix build .#despice -o result-despice
+          nix shell .#despice --command python -c 'import pyspice_rs; print("despice ok")'
