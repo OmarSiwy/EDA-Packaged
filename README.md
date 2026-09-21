@@ -15,6 +15,8 @@ That one line is the point of this repo.
 |------|--------------------|-----|
 | `cktimg` | `github:OmarSiwy/cktImg` | built here — nothing else caches it |
 | `despice` | `github:OmarSiwy/PySpice` | built here — nothing else caches it |
+| `openvaf` | `github:arpadbuermen/OpenVAF` | built here — not in nixpkgs |
+| `vacask` | `github:robtaylor/VACASK` | built here — not in nixpkgs |
 | `netgen` | `github:efabless/nix-eda` | re-exported, already prebuilt upstream |
 
 Everything else the template needs — xschem, klayout, ngspice, libngspice, magic-vlsi —
@@ -30,6 +32,12 @@ our own would cost a derivation that goes stale. (An earlier attempt at exactly 
 as far as a binary that built cleanly and then died on a missing `tclnetgen.so`, because
 netgen's Makefile pipes its build through `tee` and reports *tee's* exit status.)
 
+**openvaf and vacask are built from source on every platform.** Neither is in nixpkgs and
+nothing else caches them, which is the same reason `cktimg` and `despice` are here. VACASK
+compiles its device models with OpenVAF, so the two are always built as a pair. Unlike the
+flake inputs they are pinned by revision inside `nix/openvaf.nix` and `nix/vacask.nix` — a
+bump is an edit to the `rev`/`hash` in those files, which `update.yml` does not do for you.
+
 ## Usage
 
 ```nix
@@ -41,6 +49,8 @@ netgen's Makefile pipes its build through `tee` and reports *tee's* exit status.
     eda.packages.${system}.cktimg
     eda.packages.${system}.despice
     eda.packages.${system}.netgen
+    eda.packages.${system}.openvaf
+    eda.packages.${system}.vacask
   ];
 }
 ```

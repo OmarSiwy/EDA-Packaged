@@ -63,3 +63,14 @@ jobs:
           DESPICE=$(nix build .#despice --no-link --print-out-paths)
           PYTHONPATH="$DESPICE/lib/python3.12/site-packages" \
             nix run nixpkgs#python312 -- -c 'import pyspice_rs; print("despice ok")'
+
+          nix build .#openvaf -o result-openvaf
+          ./result-openvaf/bin/openvaf-r --help > /dev/null
+          echo "openvaf ok"
+
+          # vacask builds green with zero device models if upstream's OSDI install rules
+          # do not fire, and then every deck dies at its first `load`. Only checking that
+          # lib/vacask/mod is populated catches that.
+          nix build .#vacask -o result-vacask
+          ls result-vacask/lib/vacask/mod/*.osdi > /dev/null
+          echo "vacask ok"

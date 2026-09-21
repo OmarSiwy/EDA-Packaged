@@ -30,9 +30,18 @@
       system:
       let
         pkgs = import nixpkgs { inherit system; };
+
+        openvaf = import ./nix/openvaf.nix { inherit pkgs; };
+        # VACASK compiles its device models with OpenVAF, so the two are always built
+        # as a pair.
+        vacask = import ./nix/vacask.nix {
+          inherit pkgs openvaf;
+        };
       in
       {
         packages = {
+          inherit openvaf vacask;
+
           # Built by CI and pushed to cachix.
           cktimg = cktimg.packages.${system}.default;
           despice = despice.packages.${system}.default;
@@ -42,13 +51,15 @@
           netgen = nix-eda.packages.${system}.netgen;
 
           # Everything at once, so CI is `nix build .#all` and the cache push picks up
-          # the closure of all three in one go.
+          # the whole closure in one go.
           all = pkgs.symlinkJoin {
             name = "eda-packaged-all";
             paths = [
               cktimg.packages.${system}.default
               despice.packages.${system}.default
               nix-eda.packages.${system}.netgen
+              openvaf
+              vacask
             ];
           };
         };
