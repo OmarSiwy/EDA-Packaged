@@ -45,6 +45,18 @@ pkgs.stdenv.mkDerivation rec {
     sed -i 's/boost_system boost_filesystem boost_process/boost_filesystem boost_process/' CMakeLists.txt
     # nixpkgs suitesparse puts klu.h directly in include/, not include/suitesparse/
     sed -i 's|suitesparse/klu.h|klu.h|g' include/klumatrix.h
+    # nixpkgs only has suitesparse 5.13, whose long API is typed SuiteSparse_long
+    # (= plain `long`), not int64_t as in suitesparse >=7. VACASK instantiates its
+    # matrix templates on int64_t. On linux those are the same type so the calls
+    # compile; on darwin int64_t is `long long`, a distinct type of identical size,
+    # and every klu_l_* taking an index array fails to resolve. Cast at the call
+    # boundary: a no-op on linux, a same-width reinterpret on darwin. The int32
+    # branches next to these must keep int32_t*, hence matching on klu_l_ only.
+    sed -i '/klu_l_/ s/AP, AI/(SuiteSparse_long *)AP, (SuiteSparse_long *)AI/' \
+      lib/klumatrix.cpp lib/klubsmatrix.cpp
+    # A sed that silently matches nothing is how this package broke before, and the
+    # linux build would not notice: it compiles either way.
+    [ "$(grep -ho 'SuiteSparse_long \*)AP' lib/klumatrix.cpp lib/klubsmatrix.cpp | wc -l)" -eq 5 ]
   '';
 
   cmakeFlags = [
