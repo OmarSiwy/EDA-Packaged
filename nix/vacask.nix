@@ -50,13 +50,20 @@ pkgs.stdenv.mkDerivation rec {
     # matrix templates on int64_t. On linux those are the same type so the calls
     # compile; on darwin int64_t is `long long`, a distinct type of identical size,
     # and every klu_l_* taking an index array fails to resolve. Cast at the call
-    # boundary: a no-op on linux, a same-width reinterpret on darwin. The int32
-    # branches next to these must keep int32_t*, hence matching on klu_l_ only.
-    sed -i '/klu_l_/ s/AP, AI/(SuiteSparse_long *)AP, (SuiteSparse_long *)AI/' \
+    # boundary: a no-op on linux, a same-width reinterpret on darwin. The 64-bit
+    # entry points are klu_l_* and, for complex values, klu_zl_*; the int32 klu_*
+    # and klu_z_* calls sitting right beside them take the same AP, AI argument
+    # names and must keep int32_t*, so the address matches klu_l_/klu_zl_ only.
+    sed -i '/klu_z\?l_/ s/AP, AI/(SuiteSparse_long *)AP, (SuiteSparse_long *)AI/' \
       lib/klumatrix.cpp lib/klubsmatrix.cpp
-    # A sed that silently matches nothing is how this package broke before, and the
-    # linux build would not notice: it compiles either way.
-    [ "$(grep -ho 'SuiteSparse_long \*)AP' lib/klumatrix.cpp lib/klubsmatrix.cpp | wc -l)" -eq 5 ]
+    # Assert no 64-bit call was left uncast. Deliberately not a count: the first
+    # version of this patch hardcoded the 5 klu_l_ sites it had found by hand and
+    # sailed straight past the 3 klu_zl_ ones. Linux cannot catch that -- the cast
+    # is an identity there, so it compiles either way and only darwin breaks.
+    if grep -n 'klu_z\?l_.*AP, AI' lib/klumatrix.cpp lib/klubsmatrix.cpp; then
+      echo "postPatch: 64-bit klu call above still takes an uncast index array"
+      exit 1
+    fi
   '';
 
   cmakeFlags = [
