@@ -17,6 +17,7 @@ That one line is the point of this repo.
 | `spicerack` | `github:OmarSiwy/SpiceRack` | built here — nothing else caches it |
 | `espice` | `github:OmarSiwy/ESPice` | built here — nothing else caches it |
 | `vera` | `github:OmarSiwy/VerA` | built here — nothing else caches it |
+| `philis` | `github:UW-ASIC/Philis` | built here — nothing else caches it |
 | `openvaf` | `github:arpadbuermen/OpenVAF` | built here — not in nixpkgs |
 | `vacask` | `github:robtaylor/VACASK` | built here — not in nixpkgs |
 | `netgen` | `github:efabless/nix-eda` | re-exported, already prebuilt upstream |
@@ -52,6 +53,7 @@ bump is an edit to the `rev`/`hash` in those files, which `update.yml` does not 
     eda.packages.${system}.spicerack
     eda.packages.${system}.espice
     eda.packages.${system}.vera
+    eda.packages.${system}.philis
     eda.packages.${system}.netgen
     eda.packages.${system}.openvaf
     eda.packages.${system}.vacask

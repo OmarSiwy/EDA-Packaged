@@ -80,6 +80,17 @@ jobs:
           ./result-vera/bin/vera --help > /dev/null
           echo "vera ok"
 
+          # Place a real two-transistor mirror. --help would pass on a philis that
+          # cannot find its own rule decks, which is the failure mode worth catching:
+          # `run` takes a deck as a required argument and the package ships them.
+          nix build .#philis -o result-philis
+          ls result-philis/share/philis/pdks/sky130.json > /dev/null
+          printf '.subckt mirror vb out gnd\nM1 vb vb gnd gnd sky130_fd_pr__nfet_01v8 w=2u l=0.15u\nM2 out vb gnd gnd sky130_fd_pr__nfet_01v8 w=2u l=0.15u\n.ends\n.end\n' > /tmp/mirror.sp
+          ./result-philis/bin/philis run /tmp/mirror.sp \
+            result-philis/share/philis/pdks/sky130.json -o /tmp/pnr 2>&1 | tail -1
+          ls /tmp/pnr/mirror.gds > /dev/null
+          echo "philis ok"
+
           nix build .#openvaf -o result-openvaf
           ./result-openvaf/bin/openvaf-r --help > /dev/null
           echo "openvaf ok"

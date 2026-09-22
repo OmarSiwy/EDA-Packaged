@@ -23,6 +23,8 @@
     # Both build CPU-only — ESPice's CUDA/HIP support is dev-shell only.
     espice.url = "github:OmarSiwy/ESPice";
     vera.url = "github:OmarSiwy/VerA";
+    # Analog place-and-route. Bundles GPurify (a git dependency) for in-loop DRC/LVS.
+    philis.url = "github:UW-ASIC/Philis";
   };
 
   outputs =
@@ -34,6 +36,7 @@
       cktimg,
       espice,
       vera,
+      philis,
       ...
     }:
     flake-utils.lib.eachDefaultSystem (
@@ -59,6 +62,9 @@
           # CPU-only and statically linked — ESPice's flake builds -Dgpu=false for the
           # packaged binary, so this carries no CUDA/ROCm closure.
           espice = espice.packages.${system}.default;
+          # Also CPU-only; its `gpu` feature is opt-in. Ships bin/philis plus the rule
+          # decks under share/philis/pdks, which `philis run` requires as an argument.
+          philis = philis.packages.${system}.default;
 
           # Re-exported, not rebuilt. Pinning it here means the template takes one flake
           # input instead of two, and gets a netgen that is known to work with the rest.
@@ -73,6 +79,7 @@
               cktimg.packages.${system}.default
               vera.packages.${system}.default
               espice.packages.${system}.default
+              philis.packages.${system}.default
               nix-eda.packages.${system}.netgen
               openvaf
               vacask
