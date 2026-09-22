@@ -14,7 +14,9 @@ That one line is the point of this repo.
 | tool | where it comes from | why |
 |------|--------------------|-----|
 | `cktimg` | `github:OmarSiwy/cktImg` | built here — nothing else caches it |
-| `despice` | `github:OmarSiwy/PySpice` | built here — nothing else caches it |
+| `spicerack` | `github:OmarSiwy/SpiceRack` | built here — nothing else caches it |
+| `espice` | `github:OmarSiwy/ESPice` | built here — nothing else caches it |
+| `vera` | `github:OmarSiwy/VerA` | built here — nothing else caches it |
 | `openvaf` | `github:arpadbuermen/OpenVAF` | built here — not in nixpkgs |
 | `vacask` | `github:robtaylor/VACASK` | built here — not in nixpkgs |
 | `netgen` | `github:efabless/nix-eda` | re-exported, already prebuilt upstream |
@@ -33,7 +35,7 @@ as far as a binary that built cleanly and then died on a missing `tclnetgen.so`,
 netgen's Makefile pipes its build through `tee` and reports *tee's* exit status.)
 
 **openvaf and vacask are built from source on every platform.** Neither is in nixpkgs and
-nothing else caches them, which is the same reason `cktimg` and `despice` are here. VACASK
+nothing else caches them, which is the same reason the tools above are here. VACASK
 compiles its device models with OpenVAF, so the two are always built as a pair. Unlike the
 flake inputs they are pinned by revision inside `nix/openvaf.nix` and `nix/vacask.nix` — a
 bump is an edit to the `rev`/`hash` in those files, which `update.yml` does not do for you.
@@ -47,7 +49,9 @@ bump is an edit to the `rev`/`hash` in those files, which `update.yml` does not 
   # ...
   packages = [
     eda.packages.${system}.cktimg
-    eda.packages.${system}.despice
+    eda.packages.${system}.spicerack
+    eda.packages.${system}.espice
+    eda.packages.${system}.vera
     eda.packages.${system}.netgen
     eda.packages.${system}.openvaf
     eda.packages.${system}.vacask
@@ -84,10 +88,14 @@ failure this repo would otherwise hand to everybody at once.
 - [x] Add `CACHIX_AUTH_TOKEN` to this repo's Actions secrets
 - [x] Push `cktImg` with `src/json_main.zig`
 
-## Known gap
+## The two Verilog-A stacks
 
-`despice` ships `pyspice_rs` but **not** the `testbenches` package — maturin only installs
-the module named by `module-name`, so the other top-level package under `python-source`
-is dropped. `from testbenches import ...` therefore fails against this build and needs a
-DeSpice source checkout. Moving `python/testbenches` under `python/pyspice_rs/` upstream
-would ship it as a subpackage and close this.
+They run side by side rather than one replacing the other:
+
+- **openvaf -> vacask** — works today. OpenVAF compiles `.va` to `.osdi`, VACASK loads it.
+- **vera -> espice** — the Zig path. ESPice compiles all 39 of its device models from
+  Verilog-A with VerA at build time. Usable, but pre-release: 26 of 616 fixtures disagree
+  with ngspice and its own suite scores 492-518/616 run to run. Available, not a default.
+
+`espice` is built CPU-only and statically linked (`-Dgpu=false`), so it carries no
+CUDA/ROCm closure. Kernel work belongs in ESPice's own `nix develop`.

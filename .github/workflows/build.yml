@@ -57,12 +57,28 @@ jobs:
           fi
           echo "netgen ok"
 
-          # `nix shell .#despice` does NOT work: despice is a buildPythonPackage, so it
+          # `nix shell .#spicerack` does NOT work: it is a buildPythonPackage, so it
           # exports no bin/ and nothing sets PYTHONPATH. Importing it the way Analog.nix
-          # actually does is the only test that reflects the consumer.
-          DESPICE=$(nix build .#despice --no-link --print-out-paths)
-          PYTHONPATH="$DESPICE/lib/python3.12/site-packages" \
-            nix run nixpkgs#python312 -- -c 'import pyspice_rs; print("despice ok")'
+          # actually does is the only test that reflects the consumer. testbenches is
+          # checked too: it is a subpackage rather than a sibling now, and the reason that
+          # move happened is that the sibling was silently not installed at all.
+          SPICERACK=$(nix build .#spicerack --no-link --print-out-paths)
+          PYTHONPATH="$SPICERACK/lib/python3.12/site-packages" \
+            nix run nixpkgs#python312 -- -c \
+            'import spicerack, spicerack.testbenches; print("spicerack ok")'
+
+          # --help alone would pass on a binary that cannot solve anything, and ESPice
+          # previously built green while being unrunnable, so solve a real deck.
+          nix build .#espice -o result-espice
+          printf '* divider\nV1 vin 0 DC 10\nR1 vin vout 2k\nR2 vout 0 1k\n.op\n.end\n' > /tmp/div.sp
+          # 2>&1 because espice writes its run summary to stderr; piping stdout alone
+          # greps an empty stream and the check fails on a working binary.
+          ./result-espice/bin/espice /tmp/div.sp --format=print 2>&1 | grep -q "Operating Point"
+          echo "espice ok"
+
+          nix build .#vera -o result-vera
+          ./result-vera/bin/vera --help > /dev/null
+          echo "vera ok"
 
           nix build .#openvaf -o result-openvaf
           ./result-openvaf/bin/openvaf-r --help > /dev/null

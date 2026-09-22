@@ -11,10 +11,18 @@
     # openlane.cachix.org, so this repo re-exports rather than rebuilds it.
     nix-eda.url = "github:efabless/nix-eda";
 
-    # The two tools nothing else caches. These are the whole reason this repo exists:
+    # The tools nothing else caches. These are the whole reason this repo exists:
     # everything else the template needs is already prebuilt somewhere public.
+    #
+    # SpiceRack was called PySpice until the rename; the module is `spicerack` now and
+    # `testbenches` moved under it as a subpackage.
+    spicerack.url = "github:OmarSiwy/SpiceRack";
     cktimg.url = "github:OmarSiwy/cktImg";
-    despice.url = "github:OmarSiwy/PySpice";
+    # The second Verilog-A stack. openvaf+vacask below is the one that works today;
+    # vera+espice is the Zig path, installed alongside it rather than instead of it.
+    # Both build CPU-only — ESPice's CUDA/HIP support is dev-shell only.
+    espice.url = "github:OmarSiwy/ESPice";
+    vera.url = "github:OmarSiwy/VerA";
   };
 
   outputs =
@@ -22,8 +30,10 @@
       nixpkgs,
       flake-utils,
       nix-eda,
+      spicerack,
       cktimg,
-      despice,
+      espice,
+      vera,
       ...
     }:
     flake-utils.lib.eachDefaultSystem (
@@ -43,8 +53,12 @@
           inherit openvaf vacask;
 
           # Built by CI and pushed to cachix.
+          spicerack = spicerack.packages.${system}.default;
           cktimg = cktimg.packages.${system}.default;
-          despice = despice.packages.${system}.default;
+          vera = vera.packages.${system}.default;
+          # CPU-only and statically linked — ESPice's flake builds -Dgpu=false for the
+          # packaged binary, so this carries no CUDA/ROCm closure.
+          espice = espice.packages.${system}.default;
 
           # Re-exported, not rebuilt. Pinning it here means the template takes one flake
           # input instead of two, and gets a netgen that is known to work with the rest.
@@ -55,8 +69,10 @@
           all = pkgs.symlinkJoin {
             name = "eda-packaged-all";
             paths = [
+              spicerack.packages.${system}.default
               cktimg.packages.${system}.default
-              despice.packages.${system}.default
+              vera.packages.${system}.default
+              espice.packages.${system}.default
               nix-eda.packages.${system}.netgen
               openvaf
               vacask
