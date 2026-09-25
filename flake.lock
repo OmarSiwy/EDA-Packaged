@@ -6,11 +6,11 @@
         "nixpkgs": "nixpkgs"
       },
       "locked": {
-        "lastModified": 1790013549,
-        "narHash": "sha256-CyeJSn03KTodStrALCqQ9w7WU+He+0o4/6C4JnL89ck=",
+        "lastModified": 1790116963,
+        "narHash": "sha256-MUvF9UwTMsmrfz0FnubDGBYDZbeeoBF49Kh+z1dlx1I=",
         "owner": "OmarSiwy",
         "repo": "cktImg",
-        "rev": "1cbffa9eec477f6a08c75f1b6b1f1136d35d36ff",
+        "rev": "861c8888533c0b5a71d3580772275c577dc3f922",
         "type": "github"
       },
       "original": {
@@ -558,11 +558,11 @@
         "zig-overlay": "zig-overlay_2"
       },
       "locked": {
-        "lastModified": 1790091644,
-        "narHash": "sha256-wHVjzEDYY7dKNscpE2LkMZ2oE6bccBsjRNvrwLjvX/0=",
+        "lastModified": 1790269007,
+        "narHash": "sha256-vtfn4xThedTmW837Yk/1ZgDhBc5LRJLFcJw3sguP0+0=",
         "owner": "OmarSiwy",
         "repo": "VerA",
-        "rev": "5c099cfdb3a9cb62bcf1b0185e96daf4194446e0",
+        "rev": "22b2b38aefb313c86374478fba86d351790d24d6",
         "type": "github"
       },
       "original": {
