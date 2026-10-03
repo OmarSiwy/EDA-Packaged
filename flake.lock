@@ -6,11 +6,11 @@
         "nixpkgs": "nixpkgs"
       },
       "locked": {
-        "lastModified": 1790013549,
-        "narHash": "sha256-CyeJSn03KTodStrALCqQ9w7WU+He+0o4/6C4JnL89ck=",
+        "lastModified": 1790116963,
+        "narHash": "sha256-MUvF9UwTMsmrfz0FnubDGBYDZbeeoBF49Kh+z1dlx1I=",
         "owner": "OmarSiwy",
         "repo": "cktImg",
-        "rev": "1cbffa9eec477f6a08c75f1b6b1f1136d35d36ff",
+        "rev": "861c8888533c0b5a71d3580772275c577dc3f922",
         "type": "github"
       },
       "original": {
@@ -26,11 +26,11 @@
         "zig-overlay": "zig-overlay"
       },
       "locked": {
-        "lastModified": 1790093090,
-        "narHash": "sha256-NhNmAyCpuwSA/KjOPn4Tt/PGrVjtSRg47O7OwAiEftU=",
+        "lastModified": 1790698449,
+        "narHash": "sha256-ad49ay1P2S3TS9OWaTC7r5qngY2l4Ebg15ts5Pk1TFU=",
         "owner": "OmarSiwy",
         "repo": "ESPice",
-        "rev": "bcc13b33b03a10e27401ae7c79142bad11f32f48",
+        "rev": "16781d6ed1a032ea1799acf315f7d5bae877f74a",
         "type": "github"
       },
       "original": {
@@ -558,11 +558,11 @@
         "zig-overlay": "zig-overlay_2"
       },
       "locked": {
-        "lastModified": 1790091644,
-        "narHash": "sha256-wHVjzEDYY7dKNscpE2LkMZ2oE6bccBsjRNvrwLjvX/0=",
+        "lastModified": 1790947814,
+        "narHash": "sha256-P44Ki/K6k0sLarHjNjEFceeROfxfVHM5NCwqA5+o06Q=",
         "owner": "OmarSiwy",
         "repo": "VerA",
-        "rev": "5c099cfdb3a9cb62bcf1b0185e96daf4194446e0",
+        "rev": "ae44118d7de548344a6c1b5ccafaced593422e4c",
         "type": "github"
       },
       "original": {
