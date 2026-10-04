@@ -25,6 +25,13 @@
     vera.url = "github:OmarSiwy/VerA";
     # Analog place-and-route. Bundles GPurify (a git dependency) for in-loop DRC/LVS.
     philis.url = "github:UW-ASIC/Philis";
+    # gm/ID characterisation library (libGmIDVisualizer.so, loaded by ctypes via
+    # $GMID_LIB). Its package needs no Xyce; ngspice comes along from nixpkgs.
+    # TEMPORARY local pin: the packages.default output and the PMOS/relative-path fixes
+    # live on GmIDVisualizer's unpushed `analogioc/package` branch. Before pushing this,
+    # set the url to "github:OmarSiwy/GmIDVisualizer" and run
+    # `nix flake update gmidvisualizer`.
+    gmidvisualizer.url = "git+file:///home/omare/Documents/Projects/Trial/tooling/GmIDVisualizer?ref=analogioc/package";
   };
 
   outputs =
@@ -37,6 +44,7 @@
       espice,
       vera,
       philis,
+      gmidvisualizer,
       ...
     }:
     flake-utils.lib.eachDefaultSystem (
@@ -50,6 +58,9 @@
         vacask = import ./nix/vacask.nix {
           inherit pkgs openvaf;
         };
+        # x86_64-linux only: GmIDVisualizer's flake hardcodes that system, so on any other
+        # this is null and the package is simply absent rather than an eval error in `all`.
+        gmid = gmidvisualizer.packages.${system}.default or null;
       in
       {
         packages = {
@@ -83,9 +94,12 @@
               nix-eda.packages.${system}.netgen
               openvaf
               vacask
-            ];
+            ]
+            ++ pkgs.lib.optional (gmid != null) gmid;
           };
-        };
+        }
+        # lib/libGmIDVisualizer.so + headers + bin/gmid_runner.
+        // pkgs.lib.optionalAttrs (gmid != null) { gmidvisualizer = gmid; };
       }
     );
 }
