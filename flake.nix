@@ -26,12 +26,8 @@
     # Analog place-and-route. Bundles GPurify (a git dependency) for in-loop DRC/LVS.
     philis.url = "github:UW-ASIC/Philis";
     # gm/ID characterisation library (libGmIDVisualizer.so, loaded by ctypes via
-    # $GMID_LIB). Its package needs no Xyce; ngspice comes along from nixpkgs.
-    # TEMPORARY local pin: the packages.default output and the PMOS/relative-path fixes
-    # live on GmIDVisualizer's unpushed `analogioc/package` branch. Before pushing this,
-    # set the url to "github:OmarSiwy/GmIDVisualizer" and run
-    # `nix flake update gmidvisualizer`.
-    gmidvisualizer.url = "git+file:///home/omare/Documents/Projects/Trial/tooling/GmIDVisualizer?ref=analogioc/package";
+    # GMID_LIB by AnalogIOC analog/docs/gmid.py).
+    gmidvisualizer.url = "github:OmarSiwy/GmIDVisualizer";
   };
 
   outputs =
