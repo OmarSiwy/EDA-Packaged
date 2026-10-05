@@ -26,11 +26,11 @@
         "zig-overlay": "zig-overlay"
       },
       "locked": {
-        "lastModified": 1791189071,
-        "narHash": "sha256-zQv7uP24f6KIoZ1hRm1dGkqBzr2OJ1Xcsm/VGiuOh5o=",
+        "lastModified": 1791210805,
+        "narHash": "sha256-DlQvg7HNakAdeIORp9xvpebDWJKpCAlBQ078ovhtBdU=",
         "owner": "OmarSiwy",
         "repo": "ESPice",
-        "rev": "e8db434c9a350397ea8ac536e65501fa7444750f",
+        "rev": "9776f38eb5796a0580dcfb14ec3a38a187a4ed69",
         "type": "github"
       },
       "original": {
