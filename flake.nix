@@ -54,6 +54,8 @@
         vacask = import ./nix/vacask.nix {
           inherit pkgs openvaf;
         };
+        # ASAP7 PDK root: models for ESPice (.hdl BSIM-CMG) and ngspice (OSDI), tech, DRM.
+        asap7 = import ./nix/asap7.nix { inherit pkgs openvaf; };
         # x86_64-linux only: GmIDVisualizer's flake hardcodes that system, so on any other
         # this is null and the package is simply absent rather than an eval error in `all`.
         gmid = gmidvisualizer.packages.${system}.default or null;
@@ -79,7 +81,7 @@
       in
       {
         packages = {
-          inherit openvaf vacask;
+          inherit openvaf vacask asap7;
 
           # Built by CI and pushed to cachix.
           spicerack = spicerack.packages.${system}.default;
@@ -110,6 +112,7 @@
               nix-eda.packages.${system}.netgen
               openvaf
               vacask
+              asap7
             ]
             ++ pkgs.lib.optional (gmid != null) gmid;
           };
