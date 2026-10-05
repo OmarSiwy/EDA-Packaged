@@ -184,11 +184,11 @@
         "nixpkgs": "nixpkgs_3"
       },
       "locked": {
-        "lastModified": 1791144098,
-        "narHash": "sha256-JWZxlEwoVZWauR6YUL3kD3/pNdHKq/qP5u1drrrZcps=",
+        "lastModified": 1791165144,
+        "narHash": "sha256-6IXP8Rn1+5g0H4Wdi7Qg3OLcYMadd/SsaoBCdOlCuoQ=",
         "owner": "OmarSiwy",
         "repo": "GmIDVisualizer",
-        "rev": "fab7970e3c18e154f27be6671c69eaf32bde0f7d",
+        "rev": "c3e0091039e6841c865e2a80bac6186b43c440b3",
         "type": "github"
       },
       "original": {
