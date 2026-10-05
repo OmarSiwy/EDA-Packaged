@@ -57,6 +57,25 @@
         # x86_64-linux only: GmIDVisualizer's flake hardcodes that system, so on any other
         # this is null and the package is simply absent rather than an eval error in `all`.
         gmid = gmidvisualizer.packages.${system}.default or null;
+
+        # VerA's own flake passes `--global-cache-dir`, which Zig 0.17's `zig build`
+        # dropped, and leaves HOME at the sandbox's unwritable /homeless-shelter, so it
+        # does not build as published; the same build, with the cache named by the
+        # environment. ponytail: drop once VerA's flake does this itself.
+        veraPkg = vera.packages.${system}.default.overrideAttrs (_: {
+          buildPhase = ''
+            runHook preBuild
+            export HOME="$TMPDIR" ZIG_GLOBAL_CACHE_DIR="$TMPDIR/zig-global-cache"
+            zig build -Doptimize=ReleaseSafe --cache-dir .zig-cache
+            runHook postBuild
+          '';
+          installPhase = ''
+            runHook preInstall
+            export HOME="$TMPDIR" ZIG_GLOBAL_CACHE_DIR="$TMPDIR/zig-global-cache"
+            zig build install -Doptimize=ReleaseSafe --prefix "$out" --cache-dir .zig-cache
+            runHook postInstall
+          '';
+        });
       in
       {
         packages = {
@@ -65,7 +84,7 @@
           # Built by CI and pushed to cachix.
           spicerack = spicerack.packages.${system}.default;
           cktimg = cktimg.packages.${system}.default;
-          vera = vera.packages.${system}.default;
+          vera = veraPkg;
           # CPU-only and statically linked — ESPice's flake builds -Dgpu=false for the
           # packaged binary, so this carries no CUDA/ROCm closure. Wrapped with ZIG for
           # `.hdl` models, whose builds cache under $ESPICE_CACHE / ~/.cache/espice.
@@ -85,7 +104,7 @@
             paths = [
               spicerack.packages.${system}.default
               cktimg.packages.${system}.default
-              vera.packages.${system}.default
+              veraPkg
               espice.packages.${system}.default
               philis.packages.${system}.default
               nix-eda.packages.${system}.netgen
