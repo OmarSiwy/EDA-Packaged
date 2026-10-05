@@ -451,11 +451,11 @@
         "rust-overlay": "rust-overlay_2"
       },
       "locked": {
-        "lastModified": 1790091485,
-        "narHash": "sha256-5xiZMlHbSZervy3nTIEtNCKCIxvHzMveutA49qjyH4Y=",
+        "lastModified": 1791145034,
+        "narHash": "sha256-v1UNzYpvCdJCs9wGQise9xcYjbE4KFKqoOYpMy7fINQ=",
         "owner": "OmarSiwy",
         "repo": "SpiceRack",
-        "rev": "e67e52f25bcd321696ff4c4c289db06cb5175114",
+        "rev": "cdba3b9cef1aab80396d2cc0a170fa8ec137649f",
         "type": "github"
       },
       "original": {
