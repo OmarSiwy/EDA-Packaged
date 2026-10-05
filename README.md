@@ -97,9 +97,12 @@ failure this repo would otherwise hand to everybody at once.
 They run side by side rather than one replacing the other:
 
 - **openvaf -> vacask** — works today. OpenVAF compiles `.va` to `.osdi`, VACASK loads it.
-- **vera -> espice** — the Zig path. ESPice compiles all 39 of its device models from
-  Verilog-A with VerA at build time. Usable, but pre-release: 26 of 616 fixtures disagree
-  with ngspice and its own suite scores 492-518/616 run to run. Available, not a default.
+- **vera -> espice** — the Zig path. ESPice compiles its device models (BSIM4 included)
+  from Verilog-A with VerA at build time, and a deck's own `.hdl "model.va"` at run time;
+  it loads no OSDI. It runs the sky130 PDK decks as written (parity with ngspice in
+  ESPice's `docs/sky130.md`) and is a SpiceRack backend (`SPICERACK_BACKEND=espice`).
 
-`espice` is built CPU-only and statically linked (`-Dgpu=false`), so it carries no
-CUDA/ROCm closure. Kernel work belongs in ESPice's own `nix develop`.
+`espice` is built CPU-only and statically linked (`-Dgpu=false`, no HIP/CUDA kernels), so
+it carries no CUDA/ROCm closure. Kernel work belongs in ESPice's own `nix develop`. The
+binary is wrapped with `ZIG` pointing at the Zig it was built with: the first run of a
+`.hdl` model compiles it, into `$ESPICE_CACHE` (else `~/.cache/espice`), never the store.

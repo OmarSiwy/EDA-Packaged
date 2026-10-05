@@ -18,8 +18,8 @@
     # `testbenches` moved under it as a subpackage.
     spicerack.url = "github:OmarSiwy/SpiceRack";
     cktimg.url = "github:OmarSiwy/cktImg";
-    # The second Verilog-A stack. openvaf+vacask below is the one that works today;
-    # vera+espice is the Zig path, installed alongside it rather than instead of it.
+    # The Zig Verilog-A stack: VerA compiles Verilog-A, ESPice simulates it (no OSDI).
+    # openvaf+vacask below is the OSDI stack, installed alongside it.
     # Both build CPU-only — ESPice's CUDA/HIP support is dev-shell only.
     espice.url = "github:OmarSiwy/ESPice";
     vera.url = "github:OmarSiwy/VerA";
@@ -67,7 +67,8 @@
           cktimg = cktimg.packages.${system}.default;
           vera = vera.packages.${system}.default;
           # CPU-only and statically linked — ESPice's flake builds -Dgpu=false for the
-          # packaged binary, so this carries no CUDA/ROCm closure.
+          # packaged binary, so this carries no CUDA/ROCm closure. Wrapped with ZIG for
+          # `.hdl` models, whose builds cache under $ESPICE_CACHE / ~/.cache/espice.
           espice = espice.packages.${system}.default;
           # Also CPU-only; its `gpu` feature is opt-in. Ships bin/philis plus the rule
           # decks under share/philis/pdks, which `philis run` requires as an argument.
