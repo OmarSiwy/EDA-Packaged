@@ -6,11 +6,11 @@
         "nixpkgs": "nixpkgs"
       },
       "locked": {
-        "lastModified": 1791168266,
-        "narHash": "sha256-9k7BzYm9Aa/TRuBPVoRslaS1Cs4oBTinkqhELqHHebE=",
+        "lastModified": 1791180260,
+        "narHash": "sha256-pNxI68vZbB05kmyRqOyWzmsSBYY7jvPu15UxzBTX/no=",
         "owner": "OmarSiwy",
         "repo": "cktImg",
-        "rev": "51f348dbfc7311a82565860a9cd7f12d8b5713e3",
+        "rev": "298fee13cd0d307226bf69efa76017c6524f2083",
         "type": "github"
       },
       "original": {
