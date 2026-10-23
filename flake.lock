@@ -653,11 +653,11 @@
         "zig-overlay": "zig-overlay_3"
       },
       "locked": {
-        "lastModified": 1792642120,
-        "narHash": "sha256-yQ7/EwuQK9yHfDY0QvvmDp3HljM6LkI98pDBVhIL3h0=",
+        "lastModified": 1792689991,
+        "narHash": "sha256-PIrD43vvCmtElePB4/gh8XBaTY2H+gJikIj390e2cfQ=",
         "owner": "OmarSiwy",
         "repo": "VerA",
-        "rev": "18cdb80171e7b2b8348be6b84e0a53f86a65d01a",
+        "rev": "f340c7a0e1e2fdfd307ae7c7f394b21fa500bc08",
         "type": "github"
       },
       "original": {
