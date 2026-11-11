@@ -16,18 +16,20 @@
     #
     # SpiceRack was called PySpice until the rename; the module is `spicerack` now and
     # `testbenches` moved under it as a subpackage.
-    spicerack.url = "github:OmarSiwy/SpiceRack";
-    cktimg.url = "github:OmarSiwy/cktImg";
+    # SpiceRack repo currently unavalible
+      # spicerack.url = "github:OmarSiwy/SpiceRack";
+    # cktImg repo currently unavalible
+      # cktimg.url = "github:OmarSiwy/cktImg";
     # The Zig Verilog-A stack: VerA compiles Verilog-A, ESPice simulates it (no OSDI).
     # openvaf+vacask below is the OSDI stack, installed alongside it.
     # Both build CPU-only — ESPice's CUDA/HIP support is dev-shell only.
-    espice.url = "github:OmarSiwy/ESPice";
-    vera.url = "github:OmarSiwy/VerA";
+    espice.url = "github:Scouren/ESPice";
+    vera.url = "github:Scouren/VerA";
     # Analog place-and-route. Bundles GPurify (a git dependency) for in-loop DRC/LVS.
     philis.url = "github:UW-ASIC/Philis";
     # gm/ID characterisation library (libGmIDVisualizer.so, loaded by ctypes via
     # GMID_LIB by AnalogIOC analog/docs/gmid.py).
-    gmidvisualizer.url = "github:OmarSiwy/GmIDVisualizer";
+    gmidvisualizer.url = "github:Scouren/GmIdW";
   };
 
   outputs =
