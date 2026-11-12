@@ -26,7 +26,8 @@
     espice.url = "github:Scouren/ESPice";
     vera.url = "github:Scouren/VerA";
     # Analog place-and-route. Bundles GPurify (a git dependency) for in-loop DRC/LVS.
-    philis.url = "github:UW-ASIC/Philis";
+    # Philis repo currently unavalible
+      # philis.url = "github:UW-ASIC/Philis";
     # gm/ID characterisation library (libGmIDVisualizer.so, loaded by ctypes via
     # GMID_LIB by AnalogIOC analog/docs/gmid.py).
     gmidvisualizer.url = "github:Scouren/GmIdW";
@@ -37,11 +38,11 @@
       nixpkgs,
       flake-utils,
       nix-eda,
-      spicerack,
-      cktimg,
+        # spicerack,
+        # cktimg,
       espice,
       vera,
-      philis,
+        # philis,
       gmidvisualizer,
       ...
     }:
@@ -86,8 +87,8 @@
           inherit openvaf vacask asap7;
 
           # Built by CI and pushed to cachix.
-          spicerack = spicerack.packages.${system}.default;
-          cktimg = cktimg.packages.${system}.default;
+            # spicerack = spicerack.packages.${system}.default;
+            # cktimg = cktimg.packages.${system}.default;
           vera = veraPkg;
           # CPU-only and statically linked — ESPice's flake builds -Dgpu=false for the
           # packaged binary, so this carries no CUDA/ROCm closure. Wrapped with ZIG for
@@ -95,7 +96,7 @@
           espice = espice.packages.${system}.default;
           # Also CPU-only; its `gpu` feature is opt-in. Ships bin/philis plus the rule
           # decks under share/philis/pdks, which `philis run` requires as an argument.
-          philis = philis.packages.${system}.default;
+            # philis = philis.packages.${system}.default;
 
           # Re-exported, not rebuilt. Pinning it here means the template takes one flake
           # input instead of two, and gets a netgen that is known to work with the rest.
@@ -106,11 +107,11 @@
           all = pkgs.symlinkJoin {
             name = "eda-packaged-all";
             paths = [
-              spicerack.packages.${system}.default
-              cktimg.packages.${system}.default
+                #spicerack.packages.${system}.default
+                #cktimg.packages.${system}.default
               veraPkg
               espice.packages.${system}.default
-              philis.packages.${system}.default
+                #philis.packages.${system}.default
               nix-eda.packages.${system}.netgen
               openvaf
               vacask
